@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API REST - Sistema Bibliotecario</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f3f4f6;
+      color: #1f2937;
+      margin: 0;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 32px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    .badge {
+      display: inline-block;
+      background-color: #10b981;
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      margin-bottom: 12px;
+    }
+    h1 {
+      margin-top: 0;
+      color: #111827;
+      font-size: 26px;
+    }
+    p {
+      line-height: 1.6;
+      color: #4b5563;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-top: 28px;
+      margin-bottom: 12px;
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 6px;
+      color: #1f2937;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid #e5e7eb;
+      padding: 10px 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #f9fafb;
+      font-weight: 600;
+      color: #374151;
+    }
+    code {
+      background: #f3f4f6;
+      color: #ef4444;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13px;
+    }
+    .btn {
+      display: inline-block;
+      background-color: #2563eb;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      margin-right: 10px;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+    .btn:hover {
+      background-color: #1d4ed8;
+    }
+    .btn-secondary {
+      background-color: #4b5563;
+    }
+    .btn-secondary:hover {
+      background-color: #374151;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <span class="badge">● SERVIDOR EN LÍNEA</span>
+    <h1>API REST para el Manejo de un Sistema Bibliotecario</h1>
+    <p>
+      <strong>Módulo / Asignatura:</strong> Utilización de Frameworks para el Desarrollo de Software<br>
+      <strong>Docente:</strong> Oscar Alfredo Cruz Rovira<br>
+      <strong>Entrega:</strong> Ciclo II 2026 - Semana 16
+    </p>
+
+    <div style="margin: 20px 0;">
+      <a class="btn" href="/admin/" target="_blank">Ir al Panel de Django Admin</a>
+      <a class="btn btn-secondary" href="/api/libros/" target="_blank">Ver Catálogo de Libros (/api/libros/)</a>
+    </div>
+
+    <div class="section-title">Endpoints Principales de la API</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Método</th>
+          <th>Endpoint</th>
+          <th>Descripción</th>
+          <th>Permiso Requerido</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>POST</code></td>
+          <td><code>/api/auth/login/</code></td>
+          <td>Inicio de sesión y entrega de Token JWT</td>
+          <td>Público</td>
+        </tr>
+        <tr>
+          <td><code>POST</code></td>
+          <td><code>/api/auth/register/</code></td>
+          <td>Auto-registro de usuarios lectores</td>
+          <td>Público</td>
+        </tr>
+        <tr>
+          <td><code>GET</code></td>
+          <td><code>/api/auth/me/</code></td>
+          <td>Perfil del usuario autenticado</td>
+          <td>Token JWT</td>
+        </tr>
+        <tr>
+          <td><code>GET|POST</code></td>
+          <td><code>/api/libros/</code></td>
+          <td>CRUD de Libros del catálogo</td>
+          <td>GET: Autenticado | POST: Bibliotecario/Admin</td>
+        </tr>
+        <tr>
+          <td><code>GET|POST</code></td>
+          <td><code>/api/autores/</code></td>
+          <td>CRUD de Autores</td>
+          <td>GET: Autenticado | POST: Bibliotecario/Admin</td>
+        </tr>
+        <tr>
+          <td><code>GET|POST</code></td>
+          <td><code>/api/categorias/</code></td>
+          <td>CRUD de Categorías</td>
+          <td>GET: Autenticado | POST: Bibliotecario/Admin</td>
+        </tr>
+        <tr>
+          <td><code>POST</code></td>
+          <td><code>/api/prestamos/</code></td>
+          <td>Registrar préstamo (valida disponibilidad de stock)</td>
+          <td>Bibliotecario o Admin</td>
+        </tr>
+        <tr>
+          <td><code>POST</code></td>
+          <td><code>/api/prestamos/&lt;id&gt;/devolver/</code></td>
+          <td>Registrar devolución (repone stock al catálogo)</td>
+          <td>Bibliotecario o Admin</td>
+        </tr>
+        <tr>
+          <td><code>GET</code></td>
+          <td><code>/api/prestamos/activos/</code></td>
+          <td>Listado de préstamos activos</td>
+          <td>Bibliotecario o Admin</td>
+        </tr>
+        <tr>
+          <td><code>GET</code></td>
+          <td><code>/api/prestamos/mis_prestamos/</code></td>
+          <td>Préstamos del lector autenticado</td>
+          <td>Lector autenticado</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="section-title">Usuarios de Prueba Precargados (Seed Data)</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Rol</th>
+          <th>Usuario</th>
+          <th>Contraseña</th>
+          <th>Permisos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Administrador</strong></td>
+          <td><code>admin</code></td>
+          <td><code>Admin1234!</code></td>
+          <td>Acceso total a usuarios, catálogo y reportes</td>
+        </tr>
+        <tr>
+          <td><strong>Bibliotecario</strong></td>
+          <td><code>bibliotecario</code></td>
+          <td><code>Biblio1234!</code></td>
+          <td>Gestión de catálogo, préstamos y devoluciones</td>
+        </tr>
+        <tr>
+          <td><strong>Lector 1</strong></td>
+          <td><code>lector_juan</code></td>
+          <td><code>Lector1234!</code></td>
+          <td>Consulta de catálogo y sus propios préstamos</td>
+        </tr>
+        <tr>
+          <td><strong>Lector 2</strong></td>
+          <td><code>lector_maria</code></td>
+          <td><code>Lector1234!</code></td>
+          <td>Tiene el libro "Fundación" prestado (ejemplar agotado)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

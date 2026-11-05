@@ -1,0 +1,283 @@
+{
+  "info": {
+    "name": "API REST - Sistema Bibliotecario (UFDS)",
+    "_postman_id": "c1f7b889-1111-4222-9333-abcdef123456",
+    "description": "Colección completa de pruebas para la API REST del Sistema Bibliotecario - Módulo Utilización de Frameworks para el Desarrollo de Software. Docente: Oscar Alfredo Cruz Rovira.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000/api",
+      "type": "string"
+    },
+    {
+      "key": "token_admin",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "token_biblio",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "token_lector",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Autenticación (Auth & JWT)",
+      "item": [
+        {
+          "name": "Login - Administrador",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (pm.response.code === 200 && jsonData.tokens) {",
+                  "    pm.collectionVariables.set('token_admin', jsonData.tokens.access);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"Admin1234!\"\n}"
+            },
+            "url": {"raw": "{{base_url}}/auth/login/", "host": ["{{base_url}}"], "path": ["auth", "login", ""]}
+          }
+        },
+        {
+          "name": "Login - Bibliotecario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (pm.response.code === 200 && jsonData.tokens) {",
+                  "    pm.collectionVariables.set('token_biblio', jsonData.tokens.access);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"bibliotecario\",\n  \"password\": \"Biblio1234!\"\n}"
+            },
+            "url": {"raw": "{{base_url}}/auth/login/", "host": ["{{base_url}}"], "path": ["auth", "login", ""]}
+          }
+        },
+        {
+          "name": "Login - Lector (Juan)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (pm.response.code === 200 && jsonData.tokens) {",
+                  "    pm.collectionVariables.set('token_lector', jsonData.tokens.access);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"lector_juan\",\n  \"password\": \"Lector1234!\"\n}"
+            },
+            "url": {"raw": "{{base_url}}/auth/login/", "host": ["{{base_url}}"], "path": ["auth", "login", ""]}
+          }
+        },
+        {
+          "name": "Login - Credenciales Inválidas (Rechazo 401)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"ClaveErronea123\"\n}"
+            },
+            "url": {"raw": "{{base_url}}/auth/login/", "host": ["{{base_url}}"], "path": ["auth", "login", ""]}
+          }
+        },
+        {
+          "name": "Perfil Usuario Autenticado (/auth/me/)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token_biblio}}"}
+            ],
+            "url": {"raw": "{{base_url}}/auth/me/", "host": ["{{base_url}}"], "path": ["auth", "me", ""]}
+          }
+        },
+        {
+          "name": "Ruta protegida SIN token (Rechazo 401)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {"raw": "{{base_url}}/auth/me/", "host": ["{{base_url}}"], "path": ["auth", "me", ""]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Catálogo (Autores, Categorías y Libros)",
+      "item": [
+        {
+          "name": "Listar Autores",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token_lector}}"}],
+            "url": {"raw": "{{base_url}}/autores/", "host": ["{{base_url}}"], "path": ["autores", ""]}
+          }
+        },
+        {
+          "name": "Listar Categorías",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token_lector}}"}],
+            "url": {"raw": "{{base_url}}/categorias/", "host": ["{{base_url}}"], "path": ["categorias", ""]}
+          }
+        },
+        {
+          "name": "Listar Libros (Catálogo Completo)",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token_lector}}"}],
+            "url": {"raw": "{{base_url}}/libros/", "host": ["{{base_url}}"], "path": ["libros", ""]}
+          }
+        },
+        {
+          "name": "Listar Libros Disponibles (Filtro disponible=true)",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token_lector}}"}],
+            "url": {
+              "raw": "{{base_url}}/libros/?disponible=true",
+              "host": ["{{base_url}}"],
+              "path": ["libros", ""],
+              "query": [{"key": "disponible", "value": "true"}]
+            }
+          }
+        },
+        {
+          "name": "Crear Libro - Autorizado (Bibliotecario)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token_biblio}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Domain-Driven Design\",\n  \"isbn\": \"978-0321125217\",\n  \"autor_id\": 1,\n  \"categoria_id\": 1,\n  \"anio_publicacion\": 2003,\n  \"editorial\": \"Addison-Wesley\",\n  \"stock_total\": 3,\n  \"stock_disponible\": 3\n}"
+            },
+            "url": {"raw": "{{base_url}}/libros/", "host": ["{{base_url}}"], "path": ["libros", ""]}
+          }
+        },
+        {
+          "name": "Crear Libro - Denegado (Lector 403 Forbidden)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token_lector}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Libro No Autorizado\",\n  \"isbn\": \"978-0000000000\",\n  \"autor_id\": 1,\n  \"categoria_id\": 1,\n  \"stock_total\": 1,\n  \"stock_disponible\": 1\n}"
+            },
+            "url": {"raw": "{{base_url}}/libros/", "host": ["{{base_url}}"], "path": ["libros", ""]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Préstamos y Devoluciones",
+      "item": [
+        {
+          "name": "Registrar Préstamo Válido (Bibliotecario)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token_biblio}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"libro_id\": 1,\n  \"usuario_id\": 3,\n  \"fecha_devolucion_esperada\": \"2026-11-15T18:00:00Z\",\n  \"observaciones\": \"Préstamo registrado para Juan Pérez\"\n}"
+            },
+            "url": {"raw": "{{base_url}}/prestamos/", "host": ["{{base_url}}"], "path": ["prestamos", ""]}
+          }
+        },
+        {
+          "name": "Intentar Préstamo de Libro Agotado (Rechazo 400 Bad Request)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token_biblio}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"libro_id\": 5,\n  \"usuario_id\": 3,\n  \"fecha_devolucion_esperada\": \"2026-11-15T18:00:00Z\",\n  \"observaciones\": \"Intento de préstamo libro Fundación (stock 0)\"\n}"
+            },
+            "url": {"raw": "{{base_url}}/prestamos/", "host": ["{{base_url}}"], "path": ["prestamos", ""]}
+          }
+        },
+        {
+          "name": "Listar Préstamos Activos (/prestamos/activos/)",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token_biblio}}"}],
+            "url": {"raw": "{{base_url}}/prestamos/activos/", "host": ["{{base_url}}"], "path": ["prestamos", "activos", ""]}
+          }
+        },
+        {
+          "name": "Consultar Mis Préstamos (Lector Juan)",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token_lector}}"}],
+            "url": {"raw": "{{base_url}}/prestamos/mis_prestamos/", "host": ["{{base_url}}"], "path": ["prestamos", "mis_prestamos", ""]}
+          }
+        },
+        {
+          "name": "Registrar Devolución (/prestamos/<id>/devolver/)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token_biblio}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"observaciones\": \"Devolución realizada en biblioteca en buen estado.\"\n}"
+            },
+            "url": {"raw": "{{base_url}}/prestamos/1/devolver/", "host": ["{{base_url}}"], "path": ["prestamos", "1", "devolver", ""]}
+          }
+        }
+      ]
+    }
+  ]
+}
